@@ -10,9 +10,15 @@ jobs:
   build:
     name: 🛠️ Build
     runs-on: ubuntu-latest
+
     steps:
-      - name: 🛒 Check-out code
+      - name: 🛒 Checkout repo
         uses: actions/checkout@v4
+
+      - name: 📐 Set ENV variables
+        run: |
+          REPO_NAME=${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}
+          echo "ITCH_IO_GAME=sixty-yaks/$REPO_NAME" >> $GITHUB_ENV
 
       - name: 📐 Setup Ren'Py
         uses: remarkablegames/setup-renpy@v1
@@ -28,10 +34,18 @@ jobs:
       - name: 🛠️ Build web
         run: renpy-launcher web_build . --destination web
 
-      - name: 📡 Deploy
+      - name: 📡 Deploy to GitHub
         uses: remarkablemark/gitploy-action@v1
         with:
           directory: web
+
+      - name: 📐 Setup Butler
+        uses: remarkablegames/setup-butler@v1
+
+      - name: 📡 Deploy to itch.io
+        run: butler push web ${{ env.ITCH_IO_GAME }}:web
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
 
       - name: 🚚 Upload web artifact
         uses: actions/upload-artifact@v4

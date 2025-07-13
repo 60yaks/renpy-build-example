@@ -1,7 +1,7 @@
 import os
 import re
 
-env_file = os.getenv('GITHUB_ENV')
+env_file = os.getenv("GITHUB_ENV")
 
 with open(env_file, "a") as envfile:
     with open("game/options.rpy", "r") as f:
