@@ -22,18 +22,19 @@ jobs:
       - name: 🧪 Lint script
         run: renpy-cli game lint
 
-      - name: 🛠️ Build code
-        run: renpy-cli game compile
+      - name: 📃 Get build info
+        run: python .github/workflows/getbuildinfo.py
 
-      - name: 📦 Distribute
-        run: renpy-launcher distribute game
+      - name: 🛠️ Build web
+        run: renpy-launcher web_build . --destination web
 
-      - name: 🥅 Web Distribute
-        run: renpy-launcher web_build game --destination dist
+      - name: 📡 Deploy
+        uses: remarkablemark/gitploy-action@v1
+        with:
+          directory: web
 
-      - name: 🚚 Upload artifacts
+      - name: 🚚 Upload web artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.sha }}
-          path: "*-dists"
-          compression-level: 0
+          name: ${{ env.BUILD_NAME }}-${{ env.BUILD_VERSION }}-web.zip
+          path: web
