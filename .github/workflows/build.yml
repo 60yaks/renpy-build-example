@@ -16,6 +16,8 @@ jobs:
 
       - name: 📐 Setup Ren'Py
         uses: remarkablegames/setup-renpy@v1
+        with:
+          web: true
 
       - name: 🧪 Lint script
         run: renpy-cli game lint
@@ -25,6 +27,9 @@ jobs:
 
       - name: 📦 Distribute
         run: renpy-launcher distribute game
+
+      - name: 🥅 Web Distribute
+        run: renpy-launcher web_build game --destination dist
 
       - name: 🚚 Upload artifacts
         uses: actions/upload-artifact@v4
