@@ -25,11 +25,14 @@ jobs:
         with:
           web: true
 
-      - name: 🧪 Lint script
-        run: renpy-cli game lint
+      - name: 📃 Set version
+        run: sed -i -e 's/-sha/-${{ github.sha }}/g' game/options.rpy
 
       - name: 📃 Get build info
         run: python .github/workflows/getbuildinfo.py
+
+      - name: 🧪 Lint script
+        run: renpy-cli game lint
 
       - name: 🛠️ Build web
         run: renpy-launcher web_build . --destination web
@@ -43,7 +46,7 @@ jobs:
         uses: remarkablegames/setup-butler@v1
 
       - name: 📡 Deploy to itch.io
-        run: butler push web ${{ env.ITCH_IO_GAME }}:web
+        run: butler push web ${{ env.ITCH_IO_GAME }}:web --userversion ${{ env.BUILD_VERSION }}
         env:
           BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
 
